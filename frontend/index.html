@@ -1,127 +1,271 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PaperPilot</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@400..700&family=Kalam:wght@400&family=Patrick+Hand&family=Indie+Flower&family=Shadows+Into+Light&family=Reenie+Beanie&family=Nanum+Pen+Script&family=Covered+By+Your+Grace&family=La+Belle+Aurore&family=Homemade+Apple&display=swap">
-</head>
-<body>
-<div class="app" id="app" data-view="edit">
-  <header class="bar">
-    <div class="brand">
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 27l3-9L21 5l6 6-13 13-9 3z"/><path d="M18 8l6 6"/><path d="M5 27l5-5"/></svg>
-      <b>PaperPilot</b><span>Questions in, handwritten pages out</span>
-    </div>
-    <div class="spacer"></div>
-    <span class="status" id="status" title="Backend status"><i></i><em>Checking server…</em></span>
-    <button class="btn primary" id="dl" type="button">Download PDF</button>
-    <div class="seg viewseg" id="viewseg" role="group" aria-label="Switch view">
-      <button type="button" data-view="edit" aria-pressed="true">Edit</button>
-      <button type="button" data-view="preview" aria-pressed="false">Preview</button>
-    </div>
-  </header>
-
-  <div class="split">
-    <aside class="panel" aria-label="Assignment settings">
-      <div class="seg tabs" id="tabs" role="tablist">
-        <button type="button" role="tab" data-tab="write" aria-selected="true">Write</button>
-        <button type="button" role="tab" data-tab="hand" aria-selected="false">Handwriting</button>
-        <button type="button" role="tab" data-tab="paper" aria-selected="false">Paper</button>
-      </div>
-      <div class="panel-body">
-        <section data-panel="write" role="tabpanel">
-          <div class="field">
-            <label for="q">Question or assignment</label>
-            <textarea id="q" rows="4"></textarea>
-          </div>
-          <div class="row2">
-            <div class="field">
-              <label for="subject">Subject</label>
-              <input id="subject" type="text" list="subjects" autocomplete="off">
-              <datalist id="subjects"><option value="Data Structures"><option value="Operating Systems"><option value="Database Systems"><option value="Physics"><option value="Chemistry"><option value="Mathematics"><option value="Biology"><option value="Economics"><option value="English"><option value="History"></datalist>
-            </div>
-            <div class="field">
-              <label for="length">Answer length</label>
-              <select id="length">
-                <option value="short">Short, about 120 words</option>
-                <option value="medium">Medium, about 300 words</option>
-                <option value="long">Long, about 600 words</option>
-              </select>
-            </div>
-          </div>
-          <div class="attach">
-            <button class="btn" id="attach" type="button">Upload question paper</button>
-            <span class="hint">.txt, .md or an image</span>
-            <span class="chip" id="qchip" hidden><span id="qchip-n"></span><button type="button" id="qchip-x" aria-label="Remove attached image">&times;</button></span>
-            <input type="file" id="paperfile" accept=".txt,.md,text/plain,image/png,image/jpeg,image/webp" hidden>
-          </div>
-          <button class="btn primary" id="gen" type="button">Generate answer</button>
-          <div class="field">
-            <label for="a">Answer <span class="hint">edit freely</span></label>
-            <textarea id="a" rows="16" spellcheck="false"></textarea>
-            <p class="syntax"># heading &middot; ## subheading &middot; - bullet &middot; 1. step &middot; [bst 50 30 70] draws a tree</p>
-          </div>
-        </section>
-
-        <section data-panel="hand" role="tabpanel" hidden>
-          <div class="field">
-            <span class="lab">Handwriting style</span>
-            <div class="fonts" id="fonts"></div>
-          </div>
-          <div class="field"><label for="size">Handwriting size <span class="v" id="size-v"></span></label><input id="size" type="range" min="22" max="52" step="1"></div>
-          <div class="field"><label for="natural">Natural variation <span class="v" id="natural-v"></span></label><input id="natural" type="range" min="0" max="100" step="1"></div>
-          <div class="field"><label for="gap">Line spacing <span class="v" id="gap-v"></span></label><input id="gap" type="range" min="38" max="72" step="1"></div>
-          <div class="field">
-            <span class="lab">Ink colour</span>
-            <div class="inks" id="inks"></div>
-          </div>
-          <div class="field">
-            <span class="lab">Alignment</span>
-            <div class="seg" id="align">
-              <button type="button" data-v="left">Left</button><button type="button" data-v="center">Centre</button><button type="button" data-v="right">Right</button><button type="button" data-v="justify">Justify</button>
-            </div>
-          </div>
-          <div class="soon"><b>Match my handwriting</b><br>Upload a photo of your own writing and use it as the font. Planned for the next version; the styles above are fonts for now.</div>
-        </section>
-
-        <section data-panel="paper" role="tabpanel" hidden>
-          <div class="field">
-            <span class="lab">Paper</span>
-            <div class="papers" id="papers"></div>
-            <input type="file" id="bgfile" accept="image/png,image/jpeg,image/webp" hidden>
-          </div>
-          <div class="field"><label for="mL">Left margin <span class="v" id="mL-v"></span></label><input id="mL" type="range" min="10" max="45" step="1"></div>
-          <div class="field"><label for="mR">Right margin <span class="v" id="mR-v"></span></label><input id="mR" type="range" min="4" max="30" step="1"></div>
-          <label class="check"><input type="checkbox" id="margin"> Red margin line</label>
-          <label class="check"><input type="checkbox" id="header"> Header on every page</label>
-          <div class="row2">
-            <div class="field"><label for="name">Name</label><input id="name" type="text" autocomplete="off"></div>
-            <div class="field"><label for="date">Date</label><input id="date" type="text" autocomplete="off"></div>
-          </div>
-          <label class="check"><input type="checkbox" id="pageNums"> Page numbers</label>
-          <label class="check"><input type="checkbox" id="scan"> Scanned look (grain, binding shadow)</label>
-        </section>
-      </div>
-    </aside>
-
-    <main class="stage" aria-label="Live preview">
-      <div class="tools">
-        <span class="count" id="count" role="status">1 page</span>
-        <div class="seg zoom" role="group" aria-label="Zoom">
-          <button type="button" id="zout" aria-label="Zoom out">&minus;</button>
-          <button type="button" id="zfit" aria-label="Reset zoom"><span id="zval">100%</span></button>
-          <button type="button" id="zin" aria-label="Zoom in">+</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>PaperPilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@400..700&family=Kalam:wght@400&family=Patrick+Hand&family=Indie+Flower&family=Shadows+Into+Light&family=Reenie+Beanie&family=Nanum+Pen+Script&family=Covered+By+Your+Grace&family=La+Belle+Aurore&family=Homemade+Apple&display=swap"
+    />
+  </head>
+  <body>
+    <div class="app" id="app" data-view="edit">
+      <header class="bar">
+        <div class="brand">
+          <svg
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 27l3-9L21 5l6 6-13 13-9 3z" />
+            <path d="M18 8l6 6" />
+            <path d="M5 27l5-5" />
+          </svg>
+          <b>PaperPilot</b><span>Questions in, handwritten pages out</span>
         </div>
-        <button class="btn" id="reroll" type="button">New handwriting variation</button>
+        <div class="spacer"></div>
+        <span class="status" id="status" title="Backend status"
+          ><i></i><em>Checking server…</em></span
+        >
+        <button class="btn primary" id="dl" type="button">Download PDF</button>
+        <div
+          class="seg viewseg"
+          id="viewseg"
+          role="group"
+          aria-label="Switch view"
+        >
+          <button type="button" data-view="edit" aria-pressed="true">
+            Edit
+          </button>
+          <button type="button" data-view="preview" aria-pressed="false">
+            Preview
+          </button>
+        </div>
+      </header>
+
+      <div class="split">
+        <aside class="panel" aria-label="Assignment settings">
+          <div class="seg tabs" id="tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              data-tab="write"
+              aria-selected="true"
+            >
+              Write
+            </button>
+            <button
+              type="button"
+              role="tab"
+              data-tab="hand"
+              aria-selected="false"
+            >
+              Handwriting
+            </button>
+            <button
+              type="button"
+              role="tab"
+              data-tab="paper"
+              aria-selected="false"
+            >
+              Paper
+            </button>
+          </div>
+          <div class="panel-body">
+            <section data-panel="write" role="tabpanel">
+              <div class="field">
+                <label for="q">Question or assignment</label>
+                <textarea id="q" rows="4"></textarea>
+              </div>
+              <div class="row2">
+                <div class="field">
+                  <label for="subject">Subject</label>
+                  <input
+                    id="subject"
+                    type="text"
+                    list="subjects"
+                    autocomplete="off"
+                  />
+                  <datalist id="subjects">
+                    <option value="Data Structures"></option>
+                    <option value="Operating Systems"></option>
+                    <option value="Database Systems"></option>
+                    <option value="Physics"></option>
+                    <option value="Chemistry"></option>
+                    <option value="Mathematics"></option>
+                    <option value="Biology"></option>
+                    <option value="Economics"></option>
+                    <option value="English"></option>
+                    <option value="History"></option>
+                  </datalist>
+                </div>
+                <div class="field">
+                  <label for="length">Answer length</label>
+                  <select id="length">
+                    <option value="short">Short, about 120 words</option>
+                    <option value="medium">Medium, about 300 words</option>
+                    <option value="long">Long, about 600 words</option>
+                  </select>
+                </div>
+              </div>
+              <div class="attach">
+                <button class="btn" id="attach" type="button">
+                  Upload question paper
+                </button>
+                <span class="hint">.txt, .md or an image</span>
+                <span class="chip" id="qchip" hidden
+                  ><span id="qchip-n"></span
+                  ><button
+                    type="button"
+                    id="qchip-x"
+                    aria-label="Remove attached image"
+                  >
+                    &times;
+                  </button></span
+                >
+                <input
+                  type="file"
+                  id="paperfile"
+                  accept=".txt,.md,text/plain,image/png,image/jpeg,image/webp"
+                  hidden
+                />
+              </div>
+              <button class="btn primary" id="gen" type="button">
+                Generate answer
+              </button>
+              <div class="field">
+                <label for="a"
+                  >Answer <span class="hint">edit freely</span></label
+                >
+                <textarea id="a" rows="16" spellcheck="false"></textarea>
+                <p class="syntax">
+                  # heading &middot; ## subheading &middot; - bullet &middot; 1.
+                  step &middot; [bst 50 30 70] draws a tree
+                </p>
+              </div>
+            </section>
+
+            <section data-panel="hand" role="tabpanel" hidden>
+              <div class="field">
+                <span class="lab">Handwriting style</span>
+                <div class="fonts" id="fonts"></div>
+              </div>
+              <div class="field">
+                <label for="size"
+                  >Handwriting size <span class="v" id="size-v"></span></label
+                ><input id="size" type="range" min="22" max="52" step="1" />
+              </div>
+              <div class="field">
+                <label for="natural"
+                  >Natural variation
+                  <span class="v" id="natural-v"></span></label
+                ><input id="natural" type="range" min="0" max="100" step="1" />
+              </div>
+              <div class="field">
+                <label for="gap"
+                  >Line spacing <span class="v" id="gap-v"></span></label
+                ><input id="gap" type="range" min="38" max="72" step="1" />
+              </div>
+              <div class="field">
+                <span class="lab">Ink colour</span>
+                <div class="inks" id="inks"></div>
+              </div>
+              <div class="field">
+                <span class="lab">Alignment</span>
+                <div class="seg" id="align">
+                  <button type="button" data-v="left">Left</button
+                  ><button type="button" data-v="center">Centre</button
+                  ><button type="button" data-v="right">Right</button
+                  ><button type="button" data-v="justify">Justify</button>
+                </div>
+              </div>
+              <div class="soon">
+                <b>Match my handwriting</b><br />Upload a photo of your own
+                writing and use it as the font. Planned for the next version;
+                the styles above are fonts for now.
+              </div>
+            </section>
+
+            <section data-panel="paper" role="tabpanel" hidden>
+              <div class="field">
+                <span class="lab">Paper</span>
+                <div class="papers" id="papers"></div>
+                <input
+                  type="file"
+                  id="bgfile"
+                  accept="image/png,image/jpeg,image/webp"
+                  hidden
+                />
+              </div>
+              <div class="field">
+                <label for="mL"
+                  >Left margin <span class="v" id="mL-v"></span></label
+                ><input id="mL" type="range" min="10" max="45" step="1" />
+              </div>
+              <div class="field">
+                <label for="mR"
+                  >Right margin <span class="v" id="mR-v"></span></label
+                ><input id="mR" type="range" min="4" max="30" step="1" />
+              </div>
+              <label class="check"
+                ><input type="checkbox" id="margin" /> Red margin line</label
+              >
+              <label class="check"
+                ><input type="checkbox" id="header" /> Header on every
+                page</label
+              >
+              <div class="row2">
+                <div class="field">
+                  <label for="name">Name</label
+                  ><input id="name" type="text" autocomplete="off" />
+                </div>
+                <div class="field">
+                  <label for="date">Date</label
+                  ><input id="date" type="text" autocomplete="off" />
+                </div>
+              </div>
+              <label class="check"
+                ><input type="checkbox" id="pageNums" /> Page numbers</label
+              >
+              <label class="check"
+                ><input type="checkbox" id="scan" /> Scanned look (grain,
+                binding shadow)</label
+              >
+            </section>
+          </div>
+        </aside>
+
+        <main class="stage" aria-label="Live preview">
+          <div class="tools">
+            <span class="count" id="count" role="status">1 page</span>
+            <div class="seg zoom" role="group" aria-label="Zoom">
+              <button type="button" id="zout" aria-label="Zoom out">
+                &minus;
+              </button>
+              <button type="button" id="zfit" aria-label="Reset zoom">
+                <span id="zval">100%</span>
+              </button>
+              <button type="button" id="zin" aria-label="Zoom in">+</button>
+            </div>
+            <button class="btn" id="reroll" type="button">
+              New handwriting variation
+            </button>
+          </div>
+          <div class="desk" id="desk"><div class="pages" id="pages"></div></div>
+        </main>
       </div>
-      <div class="desk" id="desk"><div class="pages" id="pages"></div></div>
-    </main>
-  </div>
-</div>
-<div class="toast" id="toast" role="status"></div>
-<script type="module" src="/src/main.js"></script>
-</body>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

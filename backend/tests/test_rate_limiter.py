@@ -1,5 +1,5 @@
-from collections import defaultdict, deque
 import time
+from collections import defaultdict, deque
 
 RATE_LIMIT = 12
 RATE_WINDOW = 60.0

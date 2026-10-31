@@ -13,7 +13,7 @@ export const FONTS = [
   { n: 'Nanum Pen Script', k: 1.3, tag: 'Slim' },
   { n: 'Covered By Your Grace', k: 1.25, tag: 'Loose' },
   { n: 'La Belle Aurore', k: 1.0, tag: 'Neat cursive' },
-  { n: 'Homemade Apple', k: 0.62, tag: 'Wide cursive' }
+  { n: 'Homemade Apple', k: 0.62, tag: 'Wide cursive' },
 ];
 
 export const INKS = [
@@ -21,15 +21,20 @@ export const INKS = [
   { id: 'black', c: '#18181d', name: 'Black' },
   { id: 'bb', c: '#1b2a66', name: 'Blue-black' },
   { id: 'red', c: '#c3262d', name: 'Red' },
-  { id: 'pencil', c: '#5a5d66', name: 'Pencil' }
+  { id: 'pencil', c: '#5a5d66', name: 'Pencil' },
 ];
 
 export const PAPERS = [
-  { id: 'ruled', name: 'Ruled' }, { id: 'plain', name: 'Plain' }, { id: 'graph', name: 'Graph' },
-  { id: 'dotted', name: 'Dotted' }, { id: 'eng', name: 'Engineering' }, { id: 'custom', name: 'Custom' }
+  { id: 'ruled', name: 'Ruled' },
+  { id: 'plain', name: 'Plain' },
+  { id: 'graph', name: 'Graph' },
+  { id: 'dotted', name: 'Dotted' },
+  { id: 'eng', name: 'Engineering' },
+  { id: 'custom', name: 'Custom' },
 ];
 
-export const SAMPLE_Q = 'Explain the working of a Binary Search Tree with an example.';
+export const SAMPLE_Q =
+  'Explain the working of a Binary Search Tree with an example.';
 export const SAMPLE_A = [
   '# Binary Search Tree (BST)',
   '',
@@ -58,5 +63,5 @@ export const SAMPLE_A = [
   'Search, insertion and deletion take O(log n) time in a balanced tree and O(n) in the worst case, when the tree becomes a skewed chain.',
   '',
   '## Conclusion',
-  'A BST keeps data ordered, which makes searching, insertion and deletion fast on average.'
+  'A BST keeps data ordered, which makes searching, insertion and deletion fast on average.',
 ].join('\n');

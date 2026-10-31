@@ -4,12 +4,13 @@ import os
 import time
 import uuid
 from collections import defaultdict, deque
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
@@ -48,7 +49,7 @@ if REDIS_URL:
 DIST = (BASE_DIR / "../frontend/dist").resolve()
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     yield
     if redis_client is not None:
         await redis_client.aclose()
@@ -64,7 +65,7 @@ app.add_middleware(
 
 
 class ImageIn(BaseModel):
-    mediaType: str
+    mediaType: str  # noqa: N815  (field name is part of the frontend API)
     data: str
 
 
@@ -76,7 +77,7 @@ class GenerateIn(BaseModel):
 
 
 @app.exception_handler(RequestValidationError)
-async def bad_request(_req: Request, _exc: RequestValidationError):
+async def bad_request(_req: Request, _exc: RequestValidationError) -> JSONResponse:
     return JSONResponse({"code": "bad_request"}, status_code=400)
 
 
@@ -131,7 +132,7 @@ async def rate_limited(ip: str) -> bool:
 
 
 @app.get("/api/health")
-def health():
+def health() -> dict:
     return {"ok": True, "configured": configured, "model": MODEL, "rateLimit": "redis" if redis_client is not None else "memory"}
 
 
@@ -151,7 +152,7 @@ def sse(obj: dict) -> str:
 
 
 @app.post("/api/generate")
-async def generate(body: GenerateIn, request: Request):
+async def generate(body: GenerateIn, request: Request) -> Response:
     ip = request.client.host if request.client else "unknown"
     if await rate_limited(ip):
         return JSONResponse({"code": "rate_limited"}, status_code=429)
@@ -187,7 +188,7 @@ async def generate(body: GenerateIn, request: Request):
         content.append({"type": "image", "source": {"type": "base64", "media_type": image.mediaType, "data": image.data}})
     content.append({"type": "text", "text": build_prompt(question, subject, length, bool(image))})
 
-    async def stream():
+    async def stream() -> AsyncIterator[str]:
         try:
             async with client.messages.stream(
                 model=MODEL,
@@ -218,7 +219,7 @@ if DIST.is_dir():
         app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
     @app.get("/{path:path}", include_in_schema=False)
-    def spa(path: str):
+    def spa(path: str) -> Response:
         if path.startswith("api/"):
             return JSONResponse({"code": "not_found"}, status_code=404)
         f = (DIST / path).resolve()

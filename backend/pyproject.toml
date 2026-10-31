@@ -1,10 +1,18 @@
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "I", "N", "P", "W", "B", "TID"]
-exclude = { node = "node_modules", python = ".venv" }
+target-version = "py310"
+
+exclude = [
+    "node_modules",
+    ".venv",
+    "__pycache__",
+    ".git",
+    "build",
+    "dist"
+]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "B", "N", "UP", "ANN", "PLR"]
+select = ["E", "F", "I", "N", "P", "W", "B", "TID", "UP", "ANN", "PLR"]
 
 [tool.ruff.format]
 line-length = 88

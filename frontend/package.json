@@ -1,0 +1,28 @@
+{
+  "name": "paperpilot-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "vite": "^6.0.0",
+    "vitest": "^5.0.5"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "\\.[jt]sx?$": "babel-jest"
+    }
+  },
+  "vitest": {
+    "testEnvironment": "jsdom",
+    "globals": true
+  }
+}

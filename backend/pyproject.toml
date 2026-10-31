@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "N", "P", "W", "B", "TID"]
+exclude = { node = "node_modules", python = ".venv" }
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "N", "UP", "ANN", "PLR"]
+
+[tool.ruff.format]
+line-length = 88

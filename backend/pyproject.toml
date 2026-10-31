@@ -12,7 +12,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "P", "W", "B", "TID", "UP", "ANN", "PLR"]
+select = ["E", "F", "I", "N", "W", "B", "TID", "UP", "ANN", "PLR"]
 
 [tool.ruff.format]
-line-length = 88
+quote-style = "double"
